@@ -1,0 +1,123 @@
+plugins {
+    id 'edu.wpi.first.wpilib.versioning.WPILibVersioningPlugin' version '1.6'
+}
+
+apply plugin: 'maven-publish'
+apply plugin: 'edu.wpi.first.wpilib.versioning.WPILibVersioningPlugin'
+
+if (!hasProperty('releaseType')) {
+    WPILibVersion {
+        releaseType = 'OFFICIAL'
+    }
+}
+
+def csVersion = '1.0.0'
+def utilVersion = '1.0.2'
+def ntVersion = '3.1.5'
+def cvVersion = '3.1.0'
+
+publishing {
+    publications {
+      javaCsCore(MavenPublication) {
+        artifact (file("${rootDir}/cscore/javaWindows.jar")) {
+          classifier = 'windows2015'
+        }
+        artifact (file("${rootDir}/cscore/javahf.jar")) {
+          classifier = 'armhf'
+        }
+        artifact (file("${rootDir}/cscore/javaraspbian.jar")) {
+          classifier = 'arm-raspbian'
+        }
+
+        groupId 'edu.wpi.cscore.java'
+        artifactId 'cscore'
+        version csVersion
+      }
+      javaNtCore(MavenPublication) {
+        artifact (file("${rootDir}/ntcore/javaWindows.jar")) {
+          classifier = 'windows2015'
+        }
+        artifact (file("${rootDir}/ntcore/javahf.jar")) {
+          classifier = 'armhf'
+        }
+        artifact (file("${rootDir}/ntcore/javaraspbian.jar")) {
+          classifier = 'arm-raspbian'
+        }
+
+        groupId 'edu.wpi.first.wpilib.networktables.java'
+        artifactId 'NetworkTables'
+        version ntVersion
+      }
+      cppCsCore(MavenPublication) {
+        artifact (file("${rootDir}/cscore/cppWindows.zip")) {
+          classifier = 'windows2015'
+        }
+        artifact (file("${rootDir}/cscore/cpphf.zip")) {
+          classifier = 'armhf'
+        }
+        artifact (file("${rootDir}/cscore/cppraspbian.zip")) {
+          classifier = 'arm-raspbian'
+        }
+
+        groupId 'edu.wpi.cscore.cpp'
+        artifactId 'cscore'
+        version csVersion
+      }
+      cppNtCore(MavenPublication) {
+        artifact (file("${rootDir}/ntcore/cppWindows.zip")) {
+          classifier = 'windows2015'
+        }
+        artifact (file("${rootDir}/ntcore/cpphf.zip")) {
+          classifier = 'armhf'
+        }
+        artifact (file("${rootDir}/ntcore/cppraspbian.zip")) {
+          classifier = 'arm-raspbian'
+        }
+
+        groupId 'edu.wpi.first.wpilib.networktables.cpp'
+        artifactId 'NetworkTables'
+        version ntVersion
+      }
+      cppWpiUtil(MavenPublication) {
+        artifact (file("${rootDir}/wpiutil/cppWindows.zip")) {
+          classifier = 'windows2015'
+        }
+        artifact (file("${rootDir}/wpiutil/cpphf.zip")) {
+          classifier = 'armhf'
+        }
+        artifact (file("${rootDir}/wpiutil/cppraspbian.zip")) {
+          classifier = 'arm-raspbian'
+        }
+
+        groupId 'edu.wpi.first.wpilib'
+        artifactId 'wpiutil'
+        version utilVersion
+      }
+
+      jniOpenCv(MavenPublication) {
+        artifact (file("${rootDir}/jnicv/cppWindows64.jar")) {
+          classifier = 'windows-x86_64_2015'
+        }
+        artifact (file("${rootDir}/jnicv/cppWindows32.jar")) {
+          classifier = 'windows-x86_2015'
+        }
+
+        groupId 'org.opencv'
+        artifactId 'opencv-jni'
+        version cvVersion
+      }
+
+      nativeOpenCv(MavenPublication) {
+        artifact (file("${rootDir}/nativecv/cppWindows64.jar")) {
+          classifier = 'windows-x86_64_2015'
+        }
+        artifact (file("${rootDir}/nativecv/cppWindows32.jar")) {
+          classifier = 'windows-x86_2015'
+        }
+
+        groupId 'org.opencv'
+        artifactId 'opencv-natives'
+        version cvVersion
+      }
+    }
+}
