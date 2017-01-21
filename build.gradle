@@ -11,9 +11,9 @@ if (!hasProperty('releaseType')) {
     }
 }
 
-def csVersion = '1.0.0'
+def csVersion = '1.0.1'
 def utilVersion = '1.0.2'
-def ntVersion = '3.1.5'
+def ntVersion = '3.1.6'
 def cvVersion = '3.1.0'
 
 publishing {
@@ -77,47 +77,6 @@ publishing {
         groupId 'edu.wpi.first.wpilib.networktables.cpp'
         artifactId 'NetworkTables'
         version ntVersion
-      }
-      cppWpiUtil(MavenPublication) {
-        artifact (file("${rootDir}/wpiutil/cppWindows.zip")) {
-          classifier = 'windows2015'
-        }
-        artifact (file("${rootDir}/wpiutil/cpphf.zip")) {
-          classifier = 'armhf'
-        }
-        artifact (file("${rootDir}/wpiutil/cppraspbian.zip")) {
-          classifier = 'arm-raspbian'
-        }
-
-        groupId 'edu.wpi.first.wpilib'
-        artifactId 'wpiutil'
-        version utilVersion
-      }
-
-      jniOpenCv(MavenPublication) {
-        artifact (file("${rootDir}/jnicv/cppWindows64.jar")) {
-          classifier = 'windows-x86_64_2015'
-        }
-        artifact (file("${rootDir}/jnicv/cppWindows32.jar")) {
-          classifier = 'windows-x86_2015'
-        }
-
-        groupId 'org.opencv'
-        artifactId 'opencv-jni'
-        version cvVersion
-      }
-
-      nativeOpenCv(MavenPublication) {
-        artifact (file("${rootDir}/nativecv/cppWindows64.jar")) {
-          classifier = 'windows-x86_64_2015'
-        }
-        artifact (file("${rootDir}/nativecv/cppWindows32.jar")) {
-          classifier = 'windows-x86_2015'
-        }
-
-        groupId 'org.opencv'
-        artifactId 'opencv-natives'
-        version cvVersion
       }
     }
 }
