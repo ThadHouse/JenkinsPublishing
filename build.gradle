@@ -11,9 +11,9 @@ if (!hasProperty('releaseType')) {
     }
 }
 
-def csVersion = '1.0.1'
+def csVersion = '1.0.2'
 def utilVersion = '1.0.2'
-def ntVersion = '3.1.6'
+def ntVersion = '3.1.7'
 def cvVersion = '3.1.0'
 
 publishing {
