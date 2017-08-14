@@ -7,76 +7,103 @@ apply plugin: 'edu.wpi.first.wpilib.versioning.WPILibVersioningPlugin'
 
 if (!hasProperty('releaseType')) {
     WPILibVersion {
-        releaseType = 'OFFICIAL'
+        releaseType = 'DEV'
     }
 }
 
-def csVersion = '1.0.2'
-def utilVersion = '1.0.2'
-def ntVersion = '3.1.7'
-def cvVersion = '3.1.0'
+
+def finder = new FileNameFinder()
+
+def pubVersion = '3.2.0'
+
+ext.getClassifier = { f->
+    def file = f.toString()
+    def classifier = file.substring(file.indexOf('-classifier--') + '-classifier--'.length())
+    return classifier.substring(0, classifier.indexOf('.'))
+}
+
+def cppFiles = files(finder.getFileNames(new File(projectDir, 'build').absolutePath, '**/cppZip-classifier--*.zip'))
+
+def jniFiles = files(finder.getFileNames(new File(projectDir, 'build').absolutePath, '**/jniJar-classifier--*.jar'))
+
+def jarFile = file("$buildDir/java.jar")
+def jarSources =file("$buildDir/java-sources.jar")
+
+def headerFile = file("$buildDir/headers.zip")
+
+def baseArtifactId = 'opencv'
+
+def artifactGroupId = 'org.opencv'
+
+def allOutput = file('outputs')
+
+def allZipTask = project.tasks.create("ntcoreAllCppZip", Zip) {
+    description = 'Creates a zip with all ntcore cpp artifacts'
+    classifier = 'all'
+    baseName = 'ntcore'
+    destinationDir = allOutput
+    duplicatesStrategy = 'exclude'
+
+    cppFiles.each {
+        from project.zipTree(it)
+    }
+}
+
+def allJniTask = project.tasks.create("ntcoreAllJNIJar", Jar) {
+    description = 'Creates a jar with all ntcore jni artifacts'
+    classifier = 'all'
+    baseName = 'ntcoreJNI'
+    destinationDir = allOutput
+    duplicatesStrategy = 'exclude'
+
+    jniFiles.each {
+        from project.zipTree(it)
+    }
+}
+
 
 publishing {
     publications {
-      javaCsCore(MavenPublication) {
-        artifact (file("${rootDir}/cscore/javaWindows.jar")) {
-          classifier = 'windows2015'
-        }
-        artifact (file("${rootDir}/cscore/javahf.jar")) {
-          classifier = 'armhf'
-        }
-        artifact (file("${rootDir}/cscore/javaraspbian.jar")) {
-          classifier = 'arm-raspbian'
+      java(MavenPublication) {
+        artifact jarFile
+        artifact (jarSources) {
+          classifier 'sources'
         }
 
-        groupId 'edu.wpi.cscore.java'
-        artifactId 'cscore'
-        version csVersion
+          artifactId = "${baseArtifactId}-java"
+            groupId artifactGroupId
+            version pubVersion
       }
-      javaNtCore(MavenPublication) {
-        artifact (file("${rootDir}/ntcore/javaWindows.jar")) {
-          classifier = 'windows2015'
-        }
-        artifact (file("${rootDir}/ntcore/javahf.jar")) {
-          classifier = 'armhf'
-        }
-        artifact (file("${rootDir}/ntcore/javaraspbian.jar")) {
-          classifier = 'arm-raspbian'
-        }
 
-        groupId 'edu.wpi.first.wpilib.networktables.java'
-        artifactId 'NetworkTables'
-        version ntVersion
-      }
-      cppCsCore(MavenPublication) {
-        artifact (file("${rootDir}/cscore/cppWindows.zip")) {
-          classifier = 'windows2015'
-        }
-        artifact (file("${rootDir}/cscore/cpphf.zip")) {
-          classifier = 'armhf'
-        }
-        artifact (file("${rootDir}/cscore/cppraspbian.zip")) {
-          classifier = 'arm-raspbian'
-        }
+      cpp(MavenPublication) {
+            artifact (headerFile) {
+                classifier = 'headers'
+            }
 
-        groupId 'edu.wpi.cscore.cpp'
-        artifactId 'cscore'
-        version csVersion
-      }
-      cppNtCore(MavenPublication) {
-        artifact (file("${rootDir}/ntcore/cppWindows.zip")) {
-          classifier = 'windows2015'
-        }
-        artifact (file("${rootDir}/ntcore/cpphf.zip")) {
-          classifier = 'armhf'
-        }
-        artifact (file("${rootDir}/ntcore/cppraspbian.zip")) {
-          classifier = 'arm-raspbian'
-        }
+            cppFiles.each { file->
+                artifact (file) {
+                    classifier = getClassifier(file)
+                }
+            }
 
-        groupId 'edu.wpi.first.wpilib.networktables.cpp'
-        artifactId 'NetworkTables'
-        version ntVersion
-      }
+            artifact allZipTask
+
+            artifactId = "${baseArtifactId}-cpp"
+            groupId artifactGroupId
+            version pubVersion
+        }
+        jni(MavenPublication) {
+            jniFiles.each { file->
+                artifact (file) {
+                    classifier = getClassifier(file)
+                }
+            }
+
+            artifact allJniTask
+
+            artifactId = "${baseArtifactId}-jni"
+            groupId artifactGroupId
+            version pubVersion
+        }
     }
 }
