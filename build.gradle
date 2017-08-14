@@ -7,7 +7,7 @@ apply plugin: 'edu.wpi.first.wpilib.versioning.WPILibVersioningPlugin'
 
 if (!hasProperty('releaseType')) {
     WPILibVersion {
-        releaseType = 'OFFICIAL'
+        releaseType = 'DEV'
     }
 }
 
